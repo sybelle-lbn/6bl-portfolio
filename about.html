@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>About — Sybelle Lubino</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     ASSET REFERENCES — REPLACE MEDIA HERE
+     ============================================
+     The large opening photograph is a placeholder. To drop in the
+     real portrait, add <img src="images/filename.jpg" alt=""> inside
+     .about-hero__image (search this file for that class). The
+     placeholder disappears automatically once a real image is
+     present — same mechanism as HOME and WORK.
+     ============================================ */
+
+  :root{
+    --bg: #0a0a0a;
+    --ink: #f2f0ec;
+    --ink-soft: #c2bcaf;
+    --ink-faint: #6b6559;
+    --hairline: #242424;
+    --hairline-soft: #1a1a1a;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  img, video{ display: block; max-width: 100%; }
+
+  /* ============================================
+     NAVIGATION — identical to WORK's
+     ============================================ */
+
+  .nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
+    background: linear-gradient(180deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0) 100%);
+  }
+
+  .nav__name{
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .nav__links{
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.25rem);
+    list-style: none;
+  }
+
+  .nav__links a{
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav__links a.is-current{ opacity: 1; }
+  .nav__links a:hover,
+  .nav__links a:focus-visible{ opacity: 1; }
+  .nav__links a:focus-visible{
+    outline: 1px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 640px){
+    .nav__links{ gap: 0.9rem; }
+    .nav__links a{ font-size: 0.65rem; letter-spacing: 0.09em; }
+  }
+
+  /* ============================================
+     ABOUT HERO — large photograph with "About Me"
+     and a short editorial intro line. Placeholder
+     image is elegant, not a grey box: soft gradient
+     with a quiet centered mark, easy to identify and
+     easy to replace.
+     ============================================ */
+
+  .about-hero{
+    padding: clamp(6rem, 14vh, 7.5rem) clamp(1.25rem, 5vw, 3.5rem) 0;
+  }
+
+  .about-hero__grid{
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .about-hero__image{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: linear-gradient(160deg, #1e1a15 0%, #100d0a 55%, #171310 100%);
+  }
+
+  .about-hero__image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about-hero__image-label{
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    border: 1px solid var(--hairline);
+    padding: 0.3rem 0.55rem;
+    background: rgba(10,10,10,0.55);
+  }
+
+  .about-hero__image:has(img) .about-hero__image-label{ display: none; }
+
+  .about-hero__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5.4vw, 3.4rem);
+    letter-spacing: 0.005em;
+  }
+
+  .about-hero__intro{
+    margin-top: 1.5rem;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 26rem;
+  }
+
+  .about-hero__location{
+    margin-top: 2rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 780px){
+    .about-hero__grid{
+      grid-template-columns: 1fr;
+    }
+    .about-hero__image{ max-width: 24rem; }
+  }
+
+  /* ============================================
+     STORYTELLING — 3–4 short paragraphs, generous
+     line length control for readability, same
+     typographic language as the rest of the site.
+     ============================================ */
+
+  .story{
+    padding: clamp(4rem, 9vh, 6rem) clamp(1.25rem, 5vw, 3.5rem) 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .story__inner{
+    max-width: 38rem;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 4vh, 2.25rem);
+  }
+
+  .story__paragraph{
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .story__paragraph--placeholder{
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  /* ============================================
+     CLOSING INVITATION — transitions naturally toward
+     CONTACT and BOOKING.
+     ============================================ */
+
+  .about-close{
+    padding: clamp(5rem, 11vh, 7rem) clamp(1.25rem, 5vw, 3.5rem) clamp(4rem, 9vh, 6rem);
+    text-align: center;
+  }
+
+  .about-close__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    max-width: 30rem;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+
+  .about-close__actions{
+    margin-top: clamp(1.75rem, 4vh, 2.5rem);
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .about-close__actions a{
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 0.7rem 1.5rem;
+    border: 1px solid var(--hairline);
+    transition: border-color 0.3s ease;
+  }
+
+  .about-close__actions a:hover{ border-color: var(--ink-soft); }
+
+  .about-close__actions a.is-primary{
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .about-close__actions a.is-primary:hover{ opacity: 0.9; }
+
+  /* ============================================
+     FOOTER
+     ============================================ */
+
+  .foot{
+    padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem) 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--hairline-soft);
+  }
+
+  .foot__name{ font-family: var(--serif); font-size: 0.85rem; }
+  .foot__loc{ font-size: 0.68rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+
+  @media (max-width: 640px){
+    .foot{ flex-direction: column; gap: 0.6rem; }
+  }
+
+</style>
+
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav__name">6BL</a>
+    <ul class="nav__links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html" class="is-current">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="booking.html">Book</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================================================
+       ABOUT HERO — large photograph, title, short
+       editorial intro line (placeholder, not final copy).
+       ================================================ -->
+
+  <section class="about-hero">
+    <div class="about-hero__grid">
+      <div class="about-hero__image" data-asset="about-portrait">
+        <div class="about-hero__image-label">about-portrait · replace with final photograph</div>
+      </div>
+      <div>
+        <h1 class="about-hero__title">About Me</h1>
+        <p class="about-hero__intro">Placeholder — a short editorial line will sit here, on the contrast between a small island and the wide world she intends to explore.</p>
+        <div class="about-hero__location">Guadeloupe · Paris · Available internationally</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================
+       STORYTELLING — structural placeholders for
+       roughly 3–4 short paragraphs. Final copy to be
+       supplied and dropped in without changing layout.
+       ================================================ -->
+
+  <section class="story">
+    <div class="story__inner">
+      <p class="story__paragraph story__paragraph--placeholder">Paragraph 1 — placeholder. Roots in Guadeloupe: where the eye was first shaped, and where the story begins.</p>
+      <p class="story__paragraph story__paragraph--placeholder">Paragraph 2 — placeholder. Training and formative years in Paris: the professional foundation of the craft.</p>
+      <p class="story__paragraph story__paragraph--placeholder">Paragraph 3 — placeholder. Building an independent career as a Makeup Artist and Creative Director, on her own terms.</p>
+      <p class="story__paragraph story__paragraph--placeholder">Paragraph 4 — placeholder. Artistic vision, ambition, and an open, enthusiastic outlook toward new collaborations in Paris and internationally.</p>
+    </div>
+  </section>
+
+  <!-- ================================================
+       CLOSING INVITATION — transitions toward CONTACT
+       and BOOKING.
+       ================================================ -->
+
+  <section class="about-close">
+    <p class="about-close__line">Placeholder — a closing invitation to work together will sit here.</p>
+    <div class="about-close__actions">
+      <a href="booking.html" class="is-primary">Book with me</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </section>
+
+  <footer class="foot" id="contact">
+    <div class="foot__name">Sybelle Lubino</div>
+    <div class="foot__loc">Guadeloupe · Paris · Available internationally</div>
+  </footer>
+
+</body>
+</html>
