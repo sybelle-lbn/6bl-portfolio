@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Work — Sybelle Lubino</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     ASSET REFERENCES — REPLACE MEDIA HERE
+     ============================================
+     Every placeholder on this page — project covers, credit BTS
+     images, video thumbnails, small collaborator fragments — is a
+     real <img> (or <video> for short clips) carrying a data-asset
+     name. To drop in a real file, add an <img src="images/filename.jpg"
+     alt=""> directly inside the matching element (search this file
+     for its data-asset name). The placeholder label hides itself
+     automatically once a real image is present — same mechanism as
+     the galleries on the homepage; no CSS needs touching.
+     ============================================ */
+
+  :root{
+    --bg: #0a0a0a;
+    --ink: #f2f0ec;
+    --ink-soft: #c2bcaf;   /* raised further from HOME's --ink-soft for WORK's
+                              body-copy contrast needs — see note below */
+    --ink-faint: #6b6559;  /* for genuinely secondary marks only (glimpse
+                              captions, fine print) — never for section
+                              titles or primary information */
+    --hairline: #242424;
+    --hairline-soft: #1a1a1a;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  /* CONTRAST NOTE: HOME's --ink-soft (#8a8378) was tuned for small
+     captions sitting over photography, where some recession is
+     wanted. On WORK's plain near-black background, that same value
+     read as too pale for section titles and project metadata. WORK
+     keeps the same near-black/off-white family but uses a lighter
+     --ink-soft (#b3ac9f) for anything that needs to be comfortably
+     readable, and a separate, dimmer --ink-faint only for the
+     glimpsed/soft-fading content that's deliberately secondary. */
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  img, video{ display: block; max-width: 100%; }
+
+  /* ============================================
+     NAVIGATION
+     ============================================ */
+
+  .nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
+    background: linear-gradient(180deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0) 100%);
+  }
+
+  .nav__name{
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .nav__links{
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.25rem);
+    list-style: none;
+  }
+
+  .nav__links a{
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav__links a.is-current{ opacity: 1; }
+  .nav__links a:hover,
+  .nav__links a:focus-visible{ opacity: 1; }
+  .nav__links a:focus-visible{
+    outline: 1px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 640px){
+    .nav__links{ gap: 0.9rem; }
+    .nav__links a{ font-size: 0.65rem; letter-spacing: 0.09em; }
+  }
+
+  /* ============================================
+     PAGE INTRO
+     ============================================ */
+
+  .page-intro{
+    padding: clamp(6rem, 16vh, 8rem) clamp(1.25rem, 5vw, 3.5rem) clamp(1.5rem, 4vh, 2.5rem);
+    max-width: 40rem;
+  }
+
+  .page-intro__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: 0.005em;
+  }
+
+  /* ============================================
+     SECTION SCAFFOLDING — no heavy dividers. Hierarchy
+     comes from generous whitespace and a confident title,
+     not a dark horizontal rule between blocks.
+     ============================================ */
+
+  .section{
+    padding: clamp(3rem, 7vh, 5rem) clamp(1.25rem, 5vw, 3.5rem) 0;
+  }
+
+  .section__head{
+    margin-bottom: clamp(2rem, 5vh, 3rem);
+  }
+
+  .section__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+    letter-spacing: 0.005em;
+    color: var(--ink); /* full contrast — titles must read immediately */
+  }
+
+  .section__note{
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    max-width: 24rem;
+  }
+
+  /* ============================================
+     SELECTED WORK — alternating portrait editorial
+     layout. Project 1: image left, info right.
+     Project 2: image right, info left. Portrait covers
+     (4:5) at a restrained size, not full-bleed banners.
+     ============================================ */
+
+  .projects{
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3.5rem, 8vh, 5.5rem);
+  }
+
+  .project{
+    display: grid;
+    grid-template-columns: minmax(14rem, 22rem) 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .project.reverse{
+    grid-template-columns: 1fr minmax(14rem, 22rem);
+  }
+  .project.reverse .project__cover{ order: 2; }
+  .project.reverse .project__meta{ order: 1; }
+
+  .project__cover{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5; /* portrait, matching the real photography */
+    overflow: hidden;
+    background: linear-gradient(160deg, #1a1a1a 0%, #101010 55%, #161616 100%);
+  }
+
+  .project__cover img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* curated cover crops, not raw uploads */
+    transition: transform 0.5s ease;
+  }
+
+  .project:hover .project__cover img{ transform: scale(1.02); }
+
+  .placeholder-label{
+    position: absolute;
+    left: 0.85rem;
+    bottom: 0.85rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+    border: 1px solid var(--hairline);
+    padding: 0.28rem 0.5rem;
+    background: rgba(10,10,10,0.55);
+  }
+
+  *:has(> img) > .placeholder-label{ display: none; }
+
+  .project__meta{ max-width: 26rem; }
+
+  .project__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.3rem, 2.6vw, 1.75rem);
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .project__category-year{
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+  }
+
+  .project__description{
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  @media (max-width: 480px){
+    .project,
+    .project.reverse{
+      grid-template-columns: 1fr;
+    }
+    .project.reverse .project__cover,
+    .project.reverse .project__meta{ order: initial; }
+    .project__cover{ max-width: 20rem; }
+  }
+
+  /* ============================================
+     SOFT THRESHOLD — the glimpse-and-reveal mechanism
+     shared by Selected Work and Selected Credits. A third
+     item begins, its opacity fading toward the bottom
+     rather than being hard-clipped, and "View more" sits
+     centered across that fade — a threshold, not an ending.
+     ============================================ */
+
+  .threshold{
+    position: relative;
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+    padding-bottom: clamp(3rem, 7vh, 4.5rem);
+  }
+
+  .threshold__glimpse{
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
+    max-height: 14rem;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .threshold__cta{
+    position: relative;
+    margin-top: clamp(-3rem, -6vh, -2rem);
+    display: flex;
+    justify-content: center;
+  }
+
+  .threshold__cta a{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(0.95rem, 1.7vw, 1.05rem);
+    letter-spacing: 0.03em;
+    color: var(--ink);
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--hairline);
+    background: var(--bg);
+    transition: border-color 0.3s ease, opacity 0.3s ease;
+  }
+
+  .threshold__cta a:hover{ border-color: var(--ink-soft); }
+
+  /* ============================================
+     SELECTED CREDITS — BTS + official reference, kept
+     modest in scale (not full-width feature images).
+     ============================================ */
+
+  .credits{
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 6vh, 3.5rem);
+  }
+
+  .credit{
+    display: grid;
+    grid-template-columns: minmax(9rem, 13rem) minmax(9rem, 13rem) 1fr;
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    align-items: center;
+  }
+
+  .credit__media{
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: linear-gradient(160deg, #1a1a1a 0%, #101010 55%, #161616 100%);
+  }
+
+  .credit__media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .credit__thumb{ position: relative; }
+  .credit__thumb a{ display: block; height: 100%; }
+
+  .credit__thumb::after{
+    content: '▸';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.3rem;
+    color: var(--ink);
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .credit__info{ min-width: 0; }
+
+  .credit__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: var(--ink);
+  }
+
+  .credit__role-line{
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  .credit__scale{
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 640px){
+    .credit{
+      grid-template-columns: 1fr 1fr;
+    }
+    .credit__info{
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ============================================
+     IN THEIR WORLD — the person and their words are the
+     content; a small fragment of media is supporting
+     evidence, never the main event. No cards, no stars,
+     no avatar circles, no carousel.
+     ============================================ */
+
+  .voices{
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 7vh, 4.5rem);
+  }
+
+  .voice{
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .voice__fragment{
+    position: relative;
+    flex-shrink: 0;
+    width: clamp(4.5rem, 9vw, 6rem);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: linear-gradient(160deg, #1a1a1a 0%, #101010 55%, #161616 100%);
+  }
+
+  .voice__fragment img,
+  .voice__fragment video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .voice__fragment .placeholder-label{
+    left: 0.3rem;
+    bottom: 0.3rem;
+    font-size: 0.48rem;
+    padding: 0.18rem 0.32rem;
+  }
+
+  .voice__content{ max-width: 32rem; }
+
+  .voice__quote{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.05rem, 2vw, 1.35rem);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .voice__attribution{
+    margin-top: 0.85rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 640px){
+    .voice{ gap: 1rem; }
+    .voice__fragment{ width: 3.6rem; }
+  }
+
+  /* ============================================
+     TRANSITION TO CONTACT
+     ============================================ */
+
+  .to-contact{
+    padding: clamp(4rem, 9vh, 6rem) clamp(1.25rem, 5vw, 3.5rem) clamp(3rem, 6vh, 4rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .to-contact__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+    max-width: 28rem;
+    color: var(--ink);
+  }
+
+  .to-contact a{
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    border-bottom: 1px solid var(--ink-soft);
+    padding-bottom: 0.2rem;
+  }
+
+  /* ============================================
+     FOOTER — a fine, understated line only; no heavy
+     dark divider treatment.
+     ============================================ */
+
+  .foot{
+    padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem) 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--hairline-soft);
+  }
+
+  .foot__name{ font-family: var(--serif); font-size: 0.85rem; color: var(--ink); }
+  .foot__loc{ font-size: 0.68rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+
+  @media (max-width: 640px){
+    .foot{ flex-direction: column; gap: 0.6rem; }
+  }
+
+</style>
+
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav__name">6BL</a>
+    <ul class="nav__links">
+      <li><a href="work.html" class="is-current">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="booking.html">Book</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-intro">
+    <div class="page-intro__title">Work</div>
+  </div>
+
+  <!-- ================================================
+       SELECTED WORK — modular: each .project is one
+       self-contained record (coverImage, title, category,
+       year, description). Add, remove, or reorder freely.
+       Project 1 is image-left; Project 2 uses .reverse for
+       image-right, creating the alternating rhythm.
+       ================================================ -->
+
+  <section class="section" id="selected-work">
+    <div class="section__head">
+      <div class="section__title">Selected Work</div>
+    </div>
+
+```
+<div class="projects">
+
+  <!-- PROJECT RECORD 1 — image left, info right -->
+  <a class="project" href="#" data-asset="project-01">
+    <div class="project__cover">
+      <div class="placeholder-label">project-01 · cover</div>
+    </div>
+    <div class="project__meta">
+      <div class="project__title">Project title</div>
+      <div class="project__category-year">Category — Editorial · Year</div>
+      <p class="project__description">Space reserved for a short editorial description of this project — not yet written.</p>
+    </div>
+  </a>
+
+  <!-- PROJECT RECORD 2 — image right, info left -->
+  <a class="project reverse" href="#" data-asset="project-02">
+    <div class="project__cover">
+      <div class="placeholder-label">project-02 · cover</div>
+    </div>
+    <div class="project__meta">
+      <div class="project__title">Project title</div>
+      <div class="project__category-year">Category — Beauty Series · Year</div>
+      <p class="project__description">Space reserved for a short editorial description of this project — not yet written.</p>
+    </div>
+  </a>
+
+</div>
+
+<!-- THIRD PROJECT — glimpsed, fading toward transparent,
+     with "View more" centered across the threshold rather
+     than a hard section ending -->
+<div class="threshold">
+  <div class="threshold__glimpse">
+    <a class="project" href="#" data-asset="project-03" tabindex="-1" aria-hidden="true">
+      <div class="project__cover">
+        <div class="placeholder-label">project-03 · cover</div>
+      </div>
+      <div class="project__meta">
+        <div class="project__title">Project title</div>
+        <div class="project__category-year">Category · Year</div>
+      </div>
+    </a>
+  </div>
+  <div class="threshold__cta">
+    <a href="#">View more selected work →</a>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- ================================================
+       SELECTED CREDITS — modular: each .credit is one
+       record. Add, remove, or reorder freely.
+       ================================================ -->
+
+  <section class="section" id="selected-credits">
+    <div class="section__head">
+      <div class="section__title">Selected Credits</div>
+    </div>
+
+```
+<div class="credits">
+
+  <!-- CREDIT RECORD 1 -->
+  <div class="credit" data-asset="credit-01">
+    <div class="credit__media" data-asset="credit-01-bts">
+      <div class="placeholder-label">credit-01-bts</div>
+    </div>
+    <div class="credit__media credit__thumb" data-asset="credit-01-thumb">
+      <a href="#"><div class="placeholder-label">credit-01-thumb</div></a>
+    </div>
+    <div class="credit__info">
+      <div class="credit__title">1T1 — Bouey</div>
+      <div class="credit__role-line">Makeup Artist</div>
+      <div class="credit__scale">26M+ views</div>
+    </div>
+  </div>
+
+  <!-- CREDIT RECORD 2 -->
+  <div class="credit" data-asset="credit-02">
+    <div class="credit__media" data-asset="credit-02-bts">
+      <div class="placeholder-label">credit-02-bts</div>
+    </div>
+    <div class="credit__media credit__thumb" data-asset="credit-02-thumb">
+      <a href="#"><div class="placeholder-label">credit-02-thumb</div></a>
+    </div>
+    <div class="credit__info">
+      <div class="credit__title">1T1 ft Mimi — In Di Corner</div>
+      <div class="credit__role-line">Makeup Artist</div>
+      <div class="credit__scale">10M+ views</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- THIRD CREDIT — glimpsed, same soft threshold treatment -->
+<div class="threshold">
+  <div class="threshold__glimpse">
+    <div class="credit" data-asset="credit-03" aria-hidden="true">
+      <div class="credit__media" data-asset="credit-03-bts">
+        <div class="placeholder-label">credit-03-bts</div>
+      </div>
+      <div class="credit__media credit__thumb" data-asset="credit-03-thumb">
+        <div class="placeholder-label">credit-03-thumb</div>
+      </div>
+      <div class="credit__info">
+        <div class="credit__title">Production title</div>
+        <div class="credit__role-line">Makeup Artist</div>
+        <div class="credit__scale">Views</div>
+      </div>
+    </div>
+  </div>
+  <div class="threshold__cta">
+    <a href="#">View more selected credits →</a>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- ================================================
+       IN THEIR WORLD — the person and their words come
+       first; a small fragment of media supports each
+       voice without becoming another gallery. Modular:
+       each .voice is one self-contained record (fragment,
+       quote, attribution). Add, remove, or reorder freely,
+       roughly 3–5 total per brief.
+       ================================================ -->
+
+  <section class="section" id="in-their-world">
+    <div class="section__head">
+      <div class="section__title">In Their World</div>
+      <div class="section__note">The people and productions behind the work, in their own words.</div>
+    </div>
+
+```
+<div class="voices">
+
+  <div class="voice" data-asset="voice-01">
+    <div class="voice__fragment" data-asset="voice-01-fragment">
+      <div class="placeholder-label">voice-01</div>
+    </div>
+    <div class="voice__content">
+      <p class="voice__quote">Space reserved for a testimonial — not yet written.</p>
+      <div class="voice__attribution">Name, role — not yet provided</div>
+    </div>
+  </div>
+
+  <div class="voice" data-asset="voice-02">
+    <div class="voice__fragment" data-asset="voice-02-fragment">
+      <div class="placeholder-label">voice-02</div>
+    </div>
+    <div class="voice__content">
+      <p class="voice__quote">Space reserved for a testimonial — not yet written.</p>
+      <div class="voice__attribution">Name, role — not yet provided</div>
+    </div>
+  </div>
+
+  <div class="voice" data-asset="voice-03">
+    <div class="voice__fragment" data-asset="voice-03-fragment">
+      <div class="placeholder-label">voice-03</div>
+    </div>
+    <div class="voice__content">
+      <p class="voice__quote">Space reserved for a testimonial — not yet written.</p>
+      <div class="voice__attribution">Name, role — not yet provided</div>
+    </div>
+  </div>
+
+  <!-- MORE .voice BLOCKS CAN BE ADDED HERE, UP TO
+       APPROXIMATELY 3–5 TOTAL, PER BRIEF. Each fragment
+       can be a still photo, a short muted video loop, or
+       another small piece of media connected to that
+       collaboration — swap the placeholder the same way
+       as elsewhere on the site. -->
+
+</div>
+```
+
+  </section>
+
+  <!-- ================================================
+       TRANSITION TO CONTACT
+       ================================================ -->
+
+  <div class="to-contact">
+    <p class="to-contact__line">The work continues in conversation.</p>
+    <a href="contact.html">Get in touch</a>
+  </div>
+
+  <footer class="foot" id="contact">
+    <div class="foot__name">Sybelle Lubino</div>
+    <div class="foot__loc">Guadeloupe — Available Worldwide</div>
+  </footer>
+
+</body>
+</html>
