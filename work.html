@@ -277,7 +277,17 @@
     overflow: hidden;
     pointer-events: none;
   }
+.threshold.is-open .threshold__glimpse{
+  -webkit-mask-image: none;
+  mask-image: none;
+  max-height: none;
+  overflow: visible;
+  pointer-events: auto;
+}
 
+.threshold.is-open .threshold__cta{
+  margin-top: 1.5rem;
+}
   .threshold__cta{
     position: relative;
     margin-top: clamp(-3rem, -6vh, -2rem);
@@ -567,10 +577,9 @@
     </a>
   </div>
   <div class="threshold__cta">
-    <a href="#">View more selected work →</a>
+<a href="#" id="toggle-work">View more selected work →</a>
   </div>
 </div>
-```
 
   </section>
 
@@ -583,8 +592,7 @@
     <div class="section__head">
       <div class="section__title">Selected Credits</div>
     </div>
-
-```
+    
 <div class="credits">
 
   <!-- CREDIT RECORD 1 -->
@@ -637,7 +645,7 @@
     </div>
   </div>
   <div class="threshold__cta">
-    <a href="#">View more selected credits →</a>
+<a href="#" id="toggle-credits">View more selected credits →</a>
   </div>
 </div>
 ```
@@ -700,7 +708,6 @@
        as elsewhere on the site. -->
 
 </div>
-```
 
   </section>
 
@@ -718,5 +725,40 @@
     <div class="foot__loc">Guadeloupe — Available Worldwide</div>
   </footer>
 
+  <script>
+  function setupToggle(buttonId, openText, closedText) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    const threshold = button.closest('.threshold');
+    if (!threshold) return;
+
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const isOpen = threshold.classList.toggle('is-open');
+
+      button.textContent = isOpen ? closedText : openText;
+
+      const glimpse = threshold.querySelector('.threshold__glimpse');
+      if (glimpse) {
+        glimpse.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      }
+    });
+  }
+
+  setupToggle(
+    'toggle-work',
+    'View more selected work →',
+    'View less selected work ↑'
+  );
+
+  setupToggle(
+    'toggle-credits',
+    'View more selected credits →',
+    'View less selected credits ↑'
+  );
+</script>
+  
 </body>
 </html>
