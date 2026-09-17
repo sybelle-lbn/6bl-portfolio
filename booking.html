@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Booking — Sybelle Lubino</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+  :root{
+    --bg: #0a0a0a;
+    --ink: #f2f0ec;
+    --ink-soft: #c2bcaf;
+    --ink-faint: #6b6559;
+    --hairline: #242424;
+    --hairline-soft: #1a1a1a;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  /* ============================================
+     NAVIGATION
+     ============================================ */
+
+  .nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
+    background: linear-gradient(180deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0) 100%);
+  }
+
+  .nav__name{
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .nav__links{
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.25rem);
+    list-style: none;
+  }
+
+  .nav__links a{
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav__links a.is-current{ opacity: 1; }
+  .nav__links a:hover,
+  .nav__links a:focus-visible{ opacity: 1; }
+  .nav__links a:focus-visible{
+    outline: 1px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 640px){
+    .nav__links{ gap: 0.9rem; }
+    .nav__links a{ font-size: 0.65rem; letter-spacing: 0.09em; }
+  }
+
+  /* ============================================
+     PAGE INTRO
+     ============================================ */
+
+  .page-intro{
+    padding: clamp(6rem, 16vh, 8rem) clamp(1.25rem, 5vw, 3.5rem) clamp(1rem, 3vh, 1.5rem);
+    max-width: 40rem;
+  }
+
+  .page-intro__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: 0.005em;
+  }
+
+  .page-intro__note{
+    margin-top: 0.85rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+
+  /* ============================================
+     CATEGORY SELECTOR — three large, elegant
+     selections. Choosing one reveals its form below.
+     Not a tab bar, not buttons that look like a SaaS
+     pricing page — quiet typographic selections with
+     a fine underline for the active state.
+     ============================================ */
+
+  .categories{
+    padding: clamp(2rem, 5vh, 3rem) clamp(1.25rem, 5vw, 3.5rem) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  .category-tab{
+    background: none;
+    border: none;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    color: var(--ink-soft);
+    padding: 0 0 clamp(1.25rem, 3vh, 1.75rem);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .category-tab::after{
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .category-tab:hover{ color: var(--ink); }
+
+  .category-tab.is-active{ color: var(--ink); }
+  .category-tab.is-active::after{ transform: scaleX(1); }
+
+  /* ============================================
+     FORMS — shared field styling across all three
+     categories. Editorial, not administrative: plain
+     underlines rather than boxed inputs, generous
+     spacing, serif labels kept small and quiet.
+     ============================================ */
+
+  .booking-form{
+    padding: clamp(2.5rem, 6vh, 4rem) clamp(1.25rem, 5vw, 3.5rem) clamp(4rem, 9vh, 6rem);
+    display: none;
+  }
+
+  .booking-form.is-active{ display: block; }
+
+  .form-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem clamp(1.5rem, 4vw, 3rem);
+    max-width: 46rem;
+  }
+
+  .field{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field.is-full{ grid-column: 1 / -1; }
+
+  .field label{
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    color: var(--ink-soft);
+  }
+
+  .field input,
+  .field select,
+  .field textarea{
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--hairline);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    padding: 0.5rem 0.1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder{ color: var(--ink-faint); }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  .field select{
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='%23c2bcaf'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.2rem center;
+    border-radius: 0;
+  }
+
+  .field select option{
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  .field textarea{
+    resize: vertical;
+    min-height: 4.5rem;
+    font-family: var(--sans);
+  }
+
+  .radio-group{
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+  }
+
+  .radio-option{
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .radio-option input{ accent-color: var(--ink); }
+
+  @media (max-width: 640px){
+    .form-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ============================================
+     SUBMIT — visually complete regardless of whether
+     WhatsApp is configured yet. No visible technical
+     state is ever shown to the visitor.
+     ============================================ */
+
+  .form-submit{
+    margin-top: clamp(2rem, 5vh, 2.75rem);
+    max-width: 46rem;
+  }
+
+  .send-request{
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    padding: 0.85rem 2.2rem;
+    background: var(--ink);
+    color: var(--bg);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .send-request:hover{ opacity: 0.88; }
+
+  .form-disclaimer{
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    max-width: 28rem;
+    line-height: 1.5;
+  }
+
+  /* ============================================
+     FOOTER
+     ============================================ */
+
+  .foot{
+    padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem) 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--hairline-soft);
+  }
+
+  .foot__name{ font-family: var(--serif); font-size: 0.85rem; }
+  .foot__loc{ font-size: 0.68rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+
+  @media (max-width: 640px){
+    .foot{ flex-direction: column; gap: 0.6rem; }
+  }
+
+</style>
+
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav__name">6BL</a>
+    <ul class="nav__links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="booking.html" class="is-current">Book</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-intro">
+    <div class="page-intro__title">Booking</div>
+    <p class="page-intro__note">Select the type of request below. Your message will be prepared for WhatsApp, where you can review it and send it directly.</p>
+  </div>
+
+  <div class="categories">
+    <button class="category-tab is-active" data-category="beauty" type="button">Beauty Appointment</button>
+    <button class="category-tab" data-category="bridal" type="button">Bridal</button>
+    <button class="category-tab" data-category="professional" type="button">Professional / Other</button>
+  </div>
+
+  <!-- ================================================
+       BEAUTY APPOINTMENT FORM
+       ================================================ -->
+
+  <form class="booking-form is-active" id="form-beauty" data-category-form="beauty">
+    <div class="form-grid">
+      <div class="field">
+        <label for="beauty-first-name">First name</label>
+        <input type="text" id="beauty-first-name" name="firstName" required>
+      </div>
+      <div class="field">
+        <label for="beauty-last-name">Last name</label>
+        <input type="text" id="beauty-last-name" name="lastName" required>
+      </div>
+      <div class="field">
+        <label for="beauty-phone">Phone number</label>
+        <input type="tel" id="beauty-phone" name="phone" required>
+      </div>
+      <div class="field">
+        <label for="beauty-date">Desired date</label>
+        <input type="date" id="beauty-date" name="date">
+      </div>
+      <div class="field">
+        <label for="beauty-time">Desired time</label>
+        <input type="time" id="beauty-time" name="time">
+      </div>
+      <div class="field">
+        <label for="beauty-service">Desired service</label>
+        <input type="text" id="beauty-service" name="service" placeholder="e.g. editorial makeup, event makeup">
+      </div>
+      <div class="field is-full">
+        <label>Location</label>
+        <div class="radio-group">
+          <label class="radio-option"><input type="radio" name="beautyLocationType" value="Studio" checked> Studio</label>
+          <label class="radio-option"><input type="radio" name="beautyLocationType" value="On location"> On location</label>
+        </div>
+      </div>
+      <div class="field is-full">
+        <label for="beauty-address">Address or area (if on location)</label>
+        <input type="text" id="beauty-address" name="address">
+      </div>
+      <div class="field is-full">
+        <label for="beauty-message">Additional message (optional)</label>
+        <textarea id="beauty-message" name="message"></textarea>
+      </div>
+    </div>
+    <div class="form-submit">
+      <button type="submit" class="send-request">Send Request</button>
+      <p class="form-disclaimer">Submitting a request does not confirm your appointment. Availability and booking will be confirmed directly with Sybelle.</p>
+    </div>
+  </form>
+
+  <!-- ================================================
+       BRIDAL FORM
+       ================================================ -->
+
+  <form class="booking-form" id="form-bridal" data-category-form="bridal">
+    <div class="form-grid">
+      <div class="field">
+        <label for="bridal-first-name">First name</label>
+        <input type="text" id="bridal-first-name" name="firstName" required>
+      </div>
+      <div class="field">
+        <label for="bridal-last-name">Last name</label>
+        <input type="text" id="bridal-last-name" name="lastName" required>
+      </div>
+      <div class="field">
+        <label for="bridal-phone">Phone number</label>
+        <input type="tel" id="bridal-phone" name="phone" required>
+      </div>
+      <div class="field">
+        <label for="bridal-date">Wedding date</label>
+        <input type="date" id="bridal-date" name="weddingDate">
+      </div>
+      <div class="field">
+        <label for="bridal-time">Time makeup must be completed</label>
+        <input type="time" id="bridal-time" name="completeByTime">
+      </div>
+      <div class="field">
+        <label for="bridal-prep-location">Preparation location</label>
+        <input type="text" id="bridal-prep-location" name="prepLocation">
+      </div>
+      <div class="field">
+        <label for="bridal-wedding-location">Wedding location (if relevant)</label>
+        <input type="text" id="bridal-wedding-location" name="weddingLocation">
+      </div>
+      <div class="field">
+        <label for="bridal-trial">Bridal trial requested</label>
+        <select id="bridal-trial" name="trialRequested">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+          <option value="Not sure">Not sure</option>
+        </select>
+      </div>
+      <div class="field is-full">
+        <label for="bridal-additional-people">Additional people requiring makeup</label>
+        <input type="text" id="bridal-additional-people" name="additionalPeople" placeholder="e.g. 2 bridesmaids, mother of the bride">
+      </div>
+      <div class="field is-full">
+        <label for="bridal-message">Additional message (optional)</label>
+        <textarea id="bridal-message" name="message"></textarea>
+      </div>
+    </div>
+    <div class="form-submit">
+      <button type="submit" class="send-request">Send Request</button>
+      <p class="form-disclaimer">Submitting a request does not confirm your appointment. Availability and booking will be confirmed directly with Sybelle.</p>
+    </div>
+  </form>
+
+  <!-- ================================================
+       PROFESSIONAL / OTHER FORM
+       ================================================ -->
+
+  <form class="booking-form" id="form-professional" data-category-form="professional">
+    <div class="form-grid">
+      <div class="field">
+        <label for="pro-name">Name</label>
+        <input type="text" id="pro-name" name="name" required>
+      </div>
+      <div class="field">
+        <label for="pro-company">Company / Artist / Project (optional)</label>
+        <input type="text" id="pro-company" name="company">
+      </div>
+      <div class="field">
+        <label for="pro-phone">Phone number</label>
+        <input type="tel" id="pro-phone" name="phone" required>
+      </div>
+      <div class="field">
+        <label for="pro-email">Email</label>
+        <input type="email" id="pro-email" name="email">
+      </div>
+      <div class="field">
+        <label for="pro-type">Type of project</label>
+        <input type="text" id="pro-type" name="projectType" placeholder="e.g. music video, editorial shoot, event">
+      </div>
+      <div class="field">
+        <label for="pro-date">Desired date(s)</label>
+        <input type="text" id="pro-date" name="dates">
+      </div>
+      <div class="field">
+        <label for="pro-location">Location</label>
+        <input type="text" id="pro-location" name="location">
+      </div>
+      <div class="field">
+        <label for="pro-service">Service required</label>
+        <select id="pro-service" name="serviceRequired">
+          <option value="Makeup">Makeup</option>
+          <option value="Creative Direction">Creative Direction</option>
+          <option value="Makeup + Creative Direction">Makeup + Creative Direction</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field is-full">
+        <label for="pro-details">Project details / message</label>
+        <textarea id="pro-details" name="details"></textarea>
+      </div>
+    </div>
+    <div class="form-submit">
+      <button type="submit" class="send-request">Send Request</button>
+      <p class="form-disclaimer">Submitting a request does not confirm your appointment. Availability and booking will be confirmed directly with Sybelle.</p>
+    </div>
+  </form>
+
+  <footer class="foot" id="contact">
+    <div class="foot__name">Sybelle Lubino</div>
+    <div class="foot__loc">Guadeloupe · Paris · Available internationally</div>
+  </footer>
+
+  <script>
+    /* ============================================
+       WHATSAPP CONFIGURATION — the ONLY place the
+       WhatsApp destination needs to be set. Leave as
+       null until the final WhatsApp Business number or
+       wa.me link is available; nothing else in this file
+       needs to change when it's added.
+
+       Accepted formats once ready:
+         WHATSAPP_DESTINATION = "33612345678"   (digits only,
+           country code, no + or spaces)
+         WHATSAPP_DESTINATION = "https://wa.me/33612345678"
+       ============================================ */
+    const WHATSAPP_DESTINATION = null;
+
+    function buildWhatsAppUrl(destination, message){
+      const encoded = encodeURIComponent(message);
+      if (/^https?:\/\//i.test(destination)) {
+        const sep = destination.includes('?') ? '&' : '?';
+        return destination + sep + 'text=' + encoded;
+      }
+      const digits = destination.replace(/[^\d]/g, '');
+      return 'https://wa.me/' + digits + '?text=' + encoded;
+    }
+
+    function fieldValue(form, name){
+      const el = form.elements[name];
+      if (!el) return '';
+      if (el.length && el[0] && el[0].type === 'radio'){
+        for (const radio of el){ if (radio.checked) return radio.value; }
+        return '';
+      }
+      return (el.value || '').trim();
+    }
+
+    function buildMessage(category, form){
+      const lines = ['Bonjour Sybelle,', '', 'Je souhaite effectuer une demande de prestation.', ''];
+
+      if (category === 'beauty'){
+        lines.push('Type de demande : Beauty Appointment');
+        lines.push('Nom : ' + [fieldValue(form,'firstName'), fieldValue(form,'lastName')].filter(Boolean).join(' '));
+        lines.push('Téléphone : ' + fieldValue(form,'phone'));
+        lines.push('Date souhaitée : ' + fieldValue(form,'date'));
+        lines.push('Heure souhaitée : ' + fieldValue(form,'time'));
+        lines.push('Prestation : ' + fieldValue(form,'service'));
+        lines.push('Lieu : ' + fieldValue(form,'beautyLocationType'));
+        const address = fieldValue(form,'address');
+        if (address) lines.push('Adresse / zone : ' + address);
+        const msg = fieldValue(form,'message');
+        if (msg) lines.push('Message : ' + msg);
+      }
+
+      if (category === 'bridal'){
+        lines.push('Type de demande : Bridal');
+        lines.push('Nom : ' + [fieldValue(form,'firstName'), fieldValue(form,'lastName')].filter(Boolean).join(' '));
+        lines.push('Téléphone : ' + fieldValue(form,'phone'));
+        lines.push('Date du mariage : ' + fieldValue(form,'weddingDate'));
+        lines.push('Heure de fin souhaitée : ' + fieldValue(form,'completeByTime'));
+        lines.push('Lieu de préparation : ' + fieldValue(form,'prepLocation'));
+        const weddingLoc = fieldValue(form,'weddingLocation');
+        if (weddingLoc) lines.push('Lieu du mariage : ' + weddingLoc);
+        lines.push('Essai souhaité : ' + fieldValue(form,'trialRequested'));
+        const additional = fieldValue(form,'additionalPeople');
+        if (additional) lines.push('Personnes supplémentaires : ' + additional);
+        const msg = fieldValue(form,'message');
+        if (msg) lines.push('Message : ' + msg);
+      }
+
+      if (category === 'professional'){
+        lines.push('Type de demande : Professional / Other');
+        lines.push('Nom : ' + fieldValue(form,'name'));
+        const company = fieldValue(form,'company');
+        if (company) lines.push('Société / Artiste / Projet : ' + company);
+        lines.push('Téléphone : ' + fieldValue(form,'phone'));
+        const email = fieldValue(form,'email');
+        if (email) lines.push('Email : ' + email);
+        lines.push('Type de projet : ' + fieldValue(form,'projectType'));
+        lines.push('Date(s) souhaitée(s) : ' + fieldValue(form,'dates'));
+        lines.push('Lieu : ' + fieldValue(form,'location'));
+        lines.push('Prestation : ' + fieldValue(form,'serviceRequired'));
+        const details = fieldValue(form,'details');
+        if (details) lines.push('Détails / Message : ' + details);
+      }
+
+      return lines.join('\n');
+    }
+
+    // ---- category tab switching ----
+    const tabs = document.querySelectorAll('.category-tab');
+    const forms = document.querySelectorAll('.booking-form');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const category = tab.getAttribute('data-category');
+        tabs.forEach(t => t.classList.toggle('is-active', t === tab));
+        forms.forEach(f => f.classList.toggle('is-active', f.getAttribute('data-category-form') === category));
+      });
+    });
+
+    // ---- form submission ----
+    forms.forEach(form => {
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const category = form.getAttribute('data-category-form');
+        const message = buildMessage(category, form);
+
+        // WhatsApp destination not yet configured: the button remains
+        // fully visible and functional-looking, but the redirect is
+        // silently withheld. No technical warning is ever shown to
+        // the visitor, per requirements.
+        if (!WHATSAPP_DESTINATION) {
+          return;
+        }
+
+        const url = buildWhatsAppUrl(WHATSAPP_DESTINATION, message);
+        window.open(url, '_blank', 'noopener,noreferrer');
+      });
+    });
+  </script>
+
+</body>
+</html>
