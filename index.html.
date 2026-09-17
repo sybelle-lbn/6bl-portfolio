@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sybelle Lubino — Makeup Artist &amp; Creative</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+  /* ============================================
+     ASSET REFERENCES — REPLACE IMAGES HERE
+     ============================================
+     Because this gallery must preserve each photograph's own
+     proportions (portrait stays portrait, landscape stays landscape,
+     nothing gets cropped), placeholders here work differently than
+     a simple CSS background-image swap: only a real <img> or <video>
+     element lets the browser read a file's true width and height,
+     which is what makes "height follows the media" actually work.
+
+     TO REPLACE A PLACEHOLDER WITH A REAL PHOTO OR VIDEO:
+     Find the matching .media-item in the HTML further down (search
+     for its data-asset name, e.g. data-asset="editorial-04") and
+     add ONE line directly inside that .media-item, right before its
+     <div class="tile">, in this format:
+
+         <img src="images/your-filename.jpg" alt="">
+
+     or, for a video:
+
+         <video src="images/your-clip.mp4" autoplay muted loop playsinline></video>
+
+     Once that line is added, the page automatically hides the grey
+     placeholder box behind it — you do not need to delete the
+     placeholder div or change any CSS. The photo or video will
+     display at its own true proportions, and the surrounding layout
+     will adjust around it automatically.
+
+     OPENING SEQUENCE note: hero-distant / hero-medium / hero-close
+     are the three images that drive the cinematic zoom transition.
+     These three are still swapped the OLD way — as a CSS
+     background-image — because that transition deliberately
+     controls their framing frame-by-frame; leave them as-is unless
+     you're also adjusting that transition. Everything in Editorial
+     Beauty, Hometown Vision, and In Motion uses the new <img>/<video>
+     method described above.
+     ============================================ */
+
+  [data-asset="hero-distant"] { background-image: none; }
+  [data-asset="hero-medium"]  { background-image: none; }
+  [data-asset="hero-close"]   { background-image: none; }
+  [data-asset="editorial-01"] { background-image: none; }
+  [data-asset="editorial-02"] { background-image: none; }
+  [data-asset="editorial-03"] { background-image: none; }
+
+  /* Once a real <img>/<video> is present inside a .media-item, this
+     rule hides that item's placeholder .tile automatically — no
+     manual deletion needed. */
+  .media-item:has(img, video) .tile{
+    display: none;
+  }
+
+  /* ============================================
+     BASE
+     ============================================ */
+
+  :root{
+    --bg: #0a0a0a;
+    --ink: #f2f0ec;
+    --ink-soft: #8a8378;
+    --hairline: #242424;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{
+    scroll-behavior: smooth;
+  }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  /* ============================================
+     NAVIGATION
+     ============================================ */
+
+  .nav{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem clamp(1.25rem, 4vw, 3rem);
+    mix-blend-mode: difference;
+  }
+
+  .nav__name{
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+  }
+
+  .nav__links{
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.25rem);
+    list-style: none;
+  }
+
+  .nav__links a{
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .nav__links a:hover,
+  .nav__links a:focus-visible{
+    opacity: 1;
+  }
+
+  .nav__links a:focus-visible{
+    outline: 1px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  /* mobile nav: hide word marks, keep it minimal — full menu treatment
+     will come in a later pass once more pages exist */
+  @media (max-width: 640px){
+    .nav__links{ gap: 0.9rem; }
+    .nav__links a{ font-size: 0.65rem; letter-spacing: 0.09em; }
+  }
+
+  /* ============================================
+     PINNED SCROLL SEQUENCE
+     01 ARRIVAL (distant) → 02 APPROACH (medium) → 03 IMMERSION/BEAUTY REVEAL (close)
+     → composition fragments directly into 04 EDITORIAL BEAUTY, still inside the same pin.
+     No section boundary, no blank screen: the close-up frame itself resizes and
+     repositions into an editorial grid slot as two more elements enter.
+     ============================================ */
+
+  .sequence{
+    position: relative;
+    height: 560vh; /* extended to include the fragment-into-editorial stage */
+  }
+
+  .sequence__stage{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .frame{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center 30%;
+    will-change: opacity, transform;
+    transform-origin: center center;
+  }
+
+  /* Stage C/D: .frame--close stops being an inset:0 full-bleed layer and
+     becomes a positioned box the JS can animate from full-viewport down
+     to its .close-target position — a physical camera pull-back, not a
+     clip-path crop. Position/size are set inline by JS once stage C begins.
+     inset is unset here because JS drives top/left/width/height directly;
+     leaving inset:0 active would fight those inline styles. */
+  .frame--close{
+    inset: auto;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 3; /* sits above .grid-reveal so the pull-back reads as the
+                   same photograph settling in front of the composition
+                   that's fading in behind it */
+    transition: none;
+  }
+
+  /* Neutral placeholder treatment — replaced automatically once
+     a background-image is set above via [data-asset] */
+  .frame__placeholder{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #161616 0%, #0d0d0d 55%, #141414 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* Development labels (asset names, stage names) are never shown
+     to visitors — see FINAL RULE. They remain in the HTML as
+     data-asset attributes and text content for internal reference
+     while building, but display:none removes them from the visible
+     interface site-wide without deleting any of that reference
+     information. */
+  .frame__label{
+    display: none;
+  }
+
+  /* Frame 1 — distant, holds fully visible then begins to recede */
+  .frame--distant{
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Frame 2 — medium, enters as frame 1 recedes */
+  .frame--medium{
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  /* Frame 3 — close, enters last */
+  .frame--close{
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  /* subtle permanent depth treatment so photography reads as graded,
+     not raw — kept extremely light */
+  .frame::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.35) 100%);
+    pointer-events: none;
+  }
+
+  /* ============================================
+     ZOOM-OUT-INTO-EDITORIAL LAYER
+     ============================================
+     The close-up frame (.frame--close) itself is the element that
+     zooms in tight during stage C, then scales back down during
+     stage D to settle into the position below — it is the SAME
+     photograph the visitor was just looking at full-bleed, now
+     revealed to be one frame inside a larger composition. It does
+     not change shape via clip-path; it moves and scales, the way
+     a camera pulling back would.
+
+     .grid-reveal is the composition that fades in AROUND the
+     close frame as the pull-back happens — this is what makes
+     the reveal read as "the camera was always inside my work."
+     Its first entries deliberately keep the warm placeholder
+     tone of the opening (see note on .grid-reveal__cell) rather
+     than jumping to a cold studio treatment.
+     ============================================ */
+
+  .close-target{
+    /* Defines where .frame--close settles once the pull-back
+       completes — a real cell within the grid-reveal layout,
+       not an arbitrary floating box. Position matches the
+       first grid-reveal cell exactly so the handoff is seamless. */
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    width: 46%;
+    height: 62%;
+  }
+
+  .grid-reveal{
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+  }
+
+  .grid-reveal__cell{
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    /* Warm placeholder tone — intentionally not the cool near-black
+       gradient used elsewhere. This is a visual note for later:
+       Editorial Beauty should open warm (Caribbean atmosphere, skin,
+       water, light) and only distill toward graphic/studio imagery
+       as the visitor continues scrolling past this point. */
+    background: linear-gradient(160deg, #2a1f16 0%, #1c140d 55%, #241a11 100%);
+  }
+
+  .grid-reveal__cell--b{
+    top: 8%;
+    right: 8%;
+    width: 30%;
+    height: 34%;
+  }
+
+  .grid-reveal__cell--c{
+    bottom: 8%;
+    right: 8%;
+    width: 30%;
+    height: 24%;
+  }
+
+  .grid-reveal__cell--d{
+    bottom: 8%;
+    left: 8%;
+    width: 46%;
+    height: 22%;
+  }
+
+  @media (max-width: 720px){
+    .close-target{ top: 6%; left: 6%; width: 88%; height: 46%; }
+    .grid-reveal__cell--b{ top: 54%; left: 6%; right: auto; width: 42%; height: 18%; }
+    .grid-reveal__cell--c{ top: 54%; right: 6%; width: 42%; height: 18%; bottom: auto; }
+    .grid-reveal__cell--d{ display: none; }
+  }
+
+  .editorial-word{
+    position: absolute;
+    left: clamp(1.25rem, 5vw, 3.5rem);
+    bottom: clamp(1.5rem, 6vh, 3rem);
+    z-index: 6;
+    opacity: 0;
+    max-width: 16rem;
+  }
+
+  .editorial-word__eyebrow{
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    margin-bottom: 0.9rem;
+  }
+
+  .editorial-word__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+    line-height: 1.3;
+  }
+
+  /* ============================================
+     HERO TEXT — sits inside stage 1 (Arrival)
+     ============================================ */
+
+  .hero-text{
+    position: absolute;
+    left: clamp(1.25rem, 5vw, 3.5rem);
+    bottom: clamp(2rem, 8vh, 4.5rem);
+    z-index: 5;
+    max-width: 24rem;
+  }
+
+  .hero-text__name{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    line-height: 1.05;
+    letter-spacing: 0.005em;
+  }
+
+  .hero-text__role{
+    margin-top: 0.6rem;
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  /* the cinematic line — deliberately the largest, boldest text in
+     the entire opening sequence, per brief: "large, cinematic
+     presence on screen" */
+  .hero-text__statement{
+    margin-top: 1.4rem;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 7.4vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: 0.005em;
+  }
+
+  .hero-text{
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  /* ============================================
+     APPROACH LINE — sits on the medium frame. The real
+     photograph places the subject large, upright, and
+     centered, so this text sits in the upper-left / left-
+     middle negative space, well clear of her central
+     silhouette rather than at the vertical midline.
+     ============================================ */
+
+  .approach-text{
+    position: absolute;
+    left: clamp(1.25rem, 5vw, 3rem);
+    top: clamp(3.5rem, 16vh, 7rem);
+    z-index: 5;
+    max-width: 14rem;
+    text-align: left;
+    opacity: 0;
+  }
+
+  .approach-text__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  /* ============================================
+     CLOSE LINE — the single, quiet moment at the
+     deepest point of the beauty zoom. Deliberately
+     minimal: one short line, nothing else on screen.
+     Restrained bottom-center per the real close crop.
+     ============================================ */
+
+  .close-text{
+    position: absolute;
+    left: 50%;
+    bottom: clamp(2.5rem, 10vh, 5rem);
+    transform: translateX(-50%);
+    z-index: 6;
+    opacity: 0;
+    text-align: center;
+  }
+
+  .close-text__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+
+  /* ============================================
+     PULL-BACK LINE — belongs to the transition itself,
+     not to either endpoint. Deliberately anchored in
+     approximately the SAME lower-central zone the close
+     line just occupied (bottom-center, same horizontal
+     anchor, only slightly higher) so the eye is not asked
+     to jump across the screen while the imagery is already
+     moving. Hands off to .editorial-word as the mosaic
+     takes over.
+     ============================================ */
+
+  .pullback-text{
+    position: absolute;
+    left: 50%;
+    bottom: clamp(4rem, 15vh, 7rem);
+    transform: translateX(-50%);
+    z-index: 6;
+    opacity: 0;
+    max-width: 20rem;
+    text-align: center;
+  }
+
+  .pullback-text__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  @media (max-width: 640px){
+    .approach-text{ max-width: 11rem; }
+    .pullback-text{ max-width: 14rem; }
+  }
+
+  /* ============================================
+     SCROLL CUE — minimal, disappears immediately
+     on scroll start
+     ============================================ */
+
+  .scroll-cue{
+    position: absolute;
+    right: clamp(1.25rem, 5vw, 3.5rem);
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    z-index: 5;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  /* ============================================
+  /* ============================================
+     MOSAIC SYSTEM — shared by all three portfolio chapters
+     (Editorial Beauty, Hometown Vision, In Motion).
+
+     This replaces the earlier row-based composition system. There
+     is no visible concept of "row 1 / row 2 / row 3" — every media
+     item in a chapter is packed into ONE continuous CSS Grid with
+     many narrow implicit tracks (--cell defines the track size).
+     A small packing routine (see the <script> near the closing
+     </body>) reads each item's real aspect ratio, converts it into
+     a footprint of grid cells (so many columns wide, so many rows
+     tall), and places it at the first open position that fits —
+     filling gaps left by earlier items rather than stacking in
+     strict rows. This is what makes a tall portrait, a square, and
+     a wide landscape interlock like tiles on one artboard instead
+     of lining up in ranks.
+
+     MEDIA IS NEVER CROPPED OR STRETCHED to make this work: the
+     packer only ever chooses a WHOLE-CELL footprint that matches
+     the item's own ratio at the current cell size — the image/video
+     inside still renders at its full natural proportions (width:
+     100%, height: auto, exactly as before). If an item's precise
+     ratio doesn't divide evenly into whole cells, the small
+     remainder is intentional breathing room, not a crop.
+
+     OUTER BOUNDARY: the grid's own width fills the chapter's full
+     content width (left edge to right edge of the gallery margin),
+     and the packer always finishes a row of columns before starting
+     a new implicit row, so the mosaic reads as one solid rectangle
+     with a consistent left and right edge — no accidental empty
+     margin down one side.
+
+     ADDING MEDIA LATER: add one more .media-item inside a .mosaic
+     with a data-ratio attribute (or let it inherit from a real
+     <img>/<video> once one is present) — the packer re-runs
+     automatically on load and on resize, so nothing else needs to
+     be recalculated by hand.
+     ============================================ */
+
+  .chapter{
+    padding: clamp(1.5rem, 3.5vh, 2.5rem) clamp(1.25rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .chapter-head{ margin-bottom: clamp(0.85rem, 2vh, 1.4rem); }
+  .chapter-head__title{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    letter-spacing: 0.01em;
+  }
+
+  /* ---------- the mosaic grid ----------
+     --cell is the base unit both dimensions of the grid are built
+     from. Every media item's footprint is expressed as a whole
+     number of these cells (e.g. a tall portrait might span 4
+     columns × 7 rows). Smaller --cell = finer packing precision
+     (better fill, more DOM/JS work); the value here is tuned for
+     the compact scale already established. grid-auto-rows uses the
+     same value so column-span and row-span units are equivalent,
+     which keeps the packer's math simple and keeps items from
+     distorting. */
+  .mosaic{
+    display: grid;
+    grid-template-columns: repeat(var(--mosaic-cols, 24), 1fr);
+    grid-auto-rows: var(--cell, 0.6rem);
+    grid-auto-flow: row dense; /* "dense" is what allows later,
+      smaller items to backfill gaps left by earlier placements —
+      this is the core of "pack the negative space" */
+    gap: clamp(0.35rem, 0.8vw, 0.6rem);
+  }
+
+  .chapter--motion .mosaic{ --mosaic-cols: 30; } /* finer columns —
+    more vertical pieces fit side by side per the vertical-first brief */
+
+  /* ---------- media item ---------- */
+  .media-item{
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .media-item img,
+  .media-item video{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* preserves full composition — see note
+      below on why this differs from the plain gallery system */
+  }
+
+  /* NOTE on object-fit here: unlike the earlier row system (where
+     height:auto let the browser read the file's true height
+     directly), a CSS Grid cell has a FIXED height once the packer
+     assigns a row-span. To still show the complete image with zero
+     cropping inside that fixed-height cell, the packer sizes the
+     cell's footprint to MATCH the image's own ratio as closely as
+     whole cells allow, and object-fit: contain is a safety net for
+     the small remainder — it never crops, it can only letterbox by
+     a few pixels at most when a ratio doesn't divide evenly. */
+
+  .media-item .tile{
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, #1a1a1a 0%, #101010 55%, #161616 100%);
+    position: relative;
+  }
+
+  .chapter--editorial .media-item .tile{
+    background: linear-gradient(160deg, #201811 0%, #140e09 55%, #1a130c 100%);
+  }
+  .chapter--hometown .media-item .tile{
+    background: linear-gradient(160deg, #1c1a14 0%, #12100b 55%, #181510 100%);
+  }
+  .chapter--motion .media-item .tile{
+    background: linear-gradient(160deg, #14171a 0%, #0a0c0d 55%, #121416 100%);
+  }
+
+  /* Development labels inside the mosaic tiles are never shown to
+     visitors — see FINAL RULE. The data-asset name and stage span
+     remain in the HTML for internal reference while building;
+     display:none only removes them from the visible interface. */
+  .tile__label{
+    display: none;
+  }
+  .tile--motion .tile__label::before{ content: '▸ '; }
+
+  /* ---------- interlude — a text moment placed as its own mosaic
+     item, occupying a deliberate footprint rather than breaking
+     the mosaic's flow ---------- */
+  .interlude{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .interlude.align-right{ text-align: right; }
+  .interlude__eyebrow{
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  .interlude__line{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+    line-height: 1.3;
+  }
+
+  /* ---------- full-bleed: exceptional, not default ----------
+     A full-bleed moment breaks out of the mosaic grid entirely
+     (its own block, margin-negative to the chapter's side padding)
+     rather than being one more packed cell — this keeps it rare
+     and deliberate rather than something the packer could ever
+     produce automatically. */
+  .mosaic-fullbleed{
+    margin: clamp(0.35rem, 0.8vw, 0.6rem) calc(-1 * clamp(1.25rem, 5vw, 3.5rem));
+  }
+  .mosaic-fullbleed .media-item{ width: 100%; }
+  .mosaic-fullbleed .media-item img,
+  .mosaic-fullbleed .media-item video,
+  .mosaic-fullbleed .media-item .tile{
+    max-height: 42vh;
+    width: auto;
+    margin: 0 auto;
+  }
+
+  /* ---------- responsive: column COUNT changes, packing re-runs.
+     The mosaic never solves narrower viewports by cropping — fewer,
+     wider columns simply give each item a coarser but still
+     ratio-accurate footprint, and the JS packer (which runs on
+     resize) recomputes placement against the new column count. ---------- */
+  @media (max-width: 1024px) and (min-width: 721px){
+    .mosaic{ --mosaic-cols: 16; }
+    .chapter--motion .mosaic{ --mosaic-cols: 20; }
+  }
+
+  @media (max-width: 720px){
+    .mosaic{ --mosaic-cols: 10; gap: 0.4rem; }
+    .chapter--motion .mosaic{ --mosaic-cols: 12; }
+
+    .mosaic-fullbleed .media-item img,
+    .mosaic-fullbleed .media-item video,
+    .mosaic-fullbleed .media-item .tile{
+      max-height: 34vh;
+    }
+  }
+
+     FOOTER (minimal, temporary — full footer
+     comes with CONTACT/BOOK build)
+     ============================================ */
+
+  .foot{
+    padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem) 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .foot__name{
+    font-family: var(--serif);
+    font-size: 0.85rem;
+  }
+
+  .foot__loc{
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 640px){
+    .foot{ flex-direction: column; gap: 0.6rem; }
+  }
+
+</style>
+
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav__name">6BL</a>
+    <ul class="nav__links">
+      <li><a href="work.html">Work</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="booking.html">Book</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================================================
+       PINNED SEQUENCE — 01 ARRIVAL → 02 APPROACH → 03 IMMERSION/BEAUTY REVEAL
+       → fragments directly into 04 EDITORIAL BEAUTY (no section break)
+       ================================================ -->
+
+  <div class="sequence" id="sequence">
+    <div class="sequence__stage">
+
+```
+  <!-- ARRIVAL / distant -->
+  <div class="frame frame--distant" data-frame="distant" data-asset="hero-distant">
+    <div class="frame__placeholder">
+      <div class="frame__label">
+        hero-distant
+        <span>Arrival · environment</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPROACH / medium -->
+  <div class="frame frame--medium" data-frame="medium" data-asset="hero-medium">
+    <div class="frame__placeholder">
+      <div class="frame__label">
+        hero-medium
+        <span>Approach · subject</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMMERSION / BEAUTY REVEAL / close — this same element continues
+       on into the fragment stage below, becoming the first editorial panel -->
+  <div class="frame frame--close" data-frame="close" data-asset="hero-close">
+    <div class="frame__placeholder">
+      <div class="frame__label">
+        hero-close
+        <span>Immersion / Beauty Reveal · makeup</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-text" id="heroText">
+    <div class="hero-text__name">Sybelle Lubino</div>
+    <div class="hero-text__role">Makeup Artist &amp; Creative Director</div>
+    <div class="hero-text__statement">Born in the<br>Caribbean.</div>
+  </div>
+
+  <!-- APPROACH LINE — lives on the medium frame; more intimate
+       and restrained than the hero statement, per brief -->
+  <div class="approach-text" id="approachText">
+    <p class="approach-text__line">My eye was shaped here<br>by color, contrast, skin<br>and the beauty of being seen.</p>
+  </div>
+
+  <!-- CLOSE LINE — the single quiet moment at the deepest point
+       of the beauty zoom. Nothing else shares the screen with it. -->
+  <div class="close-text" id="closeText">
+    <p class="close-text__line">Home shaped my eye.</p>
+  </div>
+
+  <!-- PULL-BACK LINE — belongs to the transition itself. Appears
+       early in the pull-back, hands off to .editorial-word as
+       the mosaic takes over. -->
+  <div class="pullback-text" id="pullbackText">
+    <p class="pullback-text__line">The world is where I intend to take it.</p>
+  </div>
+
+  <!-- Target position for the close-up frame's pull-back — invisible,
+       used only so JS can read exact coordinates to animate toward. -->
+  <div class="close-target" id="closeTarget"></div>
+
+  <!-- Grid composition that fades in AROUND the close-up frame as it
+       pulls back — this is what reveals "you were already inside my
+       work." Warm placeholder tone deliberately kept here; see CSS note
+       on .grid-reveal__cell about not jumping to cold/studio too early. -->
+  <div class="grid-reveal" id="gridReveal">
+    <div class="grid-reveal__cell grid-reveal__cell--b" data-asset="editorial-01">
+      <div class="frame__placeholder" style="padding: clamp(0.6rem, 1.5vw, 1rem);">
+        <div class="frame__label" style="font-size: 0.56rem; padding: 0.3rem 0.5rem;">editorial-01</div>
+      </div>
+    </div>
+    <div class="grid-reveal__cell grid-reveal__cell--c" data-asset="editorial-02">
+      <div class="frame__placeholder" style="padding: clamp(0.5rem, 1.2vw, 0.85rem);">
+        <div class="frame__label" style="font-size: 0.52rem; padding: 0.25rem 0.45rem;">editorial-02</div>
+      </div>
+    </div>
+    <div class="grid-reveal__cell grid-reveal__cell--d" data-asset="editorial-03">
+      <div class="frame__placeholder" style="padding: clamp(0.5rem, 1.2vw, 0.85rem);">
+        <div class="frame__label" style="font-size: 0.52rem; padding: 0.25rem 0.45rem;">editorial-03</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="editorial-word" id="editorialWord">
+    <div class="editorial-word__eyebrow">Editorial Beauty</div>
+    <p class="editorial-word__line">Space reserved for a short editorial line — not yet written.</p>
+  </div>
+
+  <div class="scroll-cue" id="scrollCue">Scroll</div>
+
+</div>
+```
+
+  </div>
+
+  <!-- ================================================
+       EDITORIAL BEAUTY — continues directly from the pull-back.
+       This chapter is a STACK OF COMPOSITIONS. Each composition is a
+       This chapter is ONE continuous mosaic — not a stack of rows.
+       Every .media-item below carries a data-ratio (width/height,
+       e.g. "3/4" for portrait, "16/9" for landscape, "1/1" for
+       square). The packing script reads these ratios and places
+       each item into the grid so shapes interlock and fill the
+       gallery's full width, edge to edge, with no visible row
+       structure. Portrait-heavy work (the expected majority) is
+       represented here accordingly. Do not reorder these by trying
+       to reason about final position — the packer decides placement;
+       reordering only changes which gaps get filled first.
+       ================================================ -->
+
+  <section class="chapter chapter--editorial" id="work">
+
+```
+<div class="mosaic" data-mosaic>
+  <div class="media-item" data-asset="editorial-04" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">editorial-04<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-05" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">editorial-05<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-06" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">editorial-06<span>square</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-07" data-ratio="16/9">
+    <div class="tile"><div class="tile__label">editorial-07<span>landscape</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-08" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">editorial-08<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-09" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">editorial-09<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-10" data-ratio="2/3">
+    <div class="tile"><div class="tile__label">editorial-10<span>portrait — tall</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-11" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">editorial-11<span>square</span></div></div>
+  </div>
+  <div class="interlude" data-ratio="4/3">
+    <div class="interlude__eyebrow">Editorial Beauty</div>
+    <p class="interlude__line">Space reserved for a short line about the series — not yet written.</p>
+  </div>
+  <div class="media-item" data-asset="editorial-12" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">editorial-12<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-13" data-ratio="3/2">
+    <div class="tile"><div class="tile__label">editorial-13<span>landscape</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-14" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">editorial-14<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-15" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">editorial-15<span>square</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-16" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">editorial-16<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-17" data-ratio="2/3">
+    <div class="tile"><div class="tile__label">editorial-17<span>portrait — tall</span></div></div>
+  </div>
+  <div class="media-item" data-asset="editorial-18" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">editorial-18<span>portrait</span></div></div>
+  </div>
+</div>
+
+<!-- one full-bleed punctuation moment — exceptional, breaks out
+     of the mosaic grid entirely rather than being one more
+     packed cell -->
+<div class="mosaic-fullbleed">
+  <div class="media-item" data-asset="editorial-19">
+    <div class="tile"><div class="tile__label">editorial-19<span>full-bleed · landscape (exceptional)</span></div></div>
+  </div>
+</div>
+
+<!-- MORE .media-item CHILDREN CAN BE ADDED ANYWHERE INSIDE THE
+     .mosaic ABOVE, EACH WITH ITS OWN data-ratio. The packer
+     re-runs automatically — not a fixed count, not fixed
+     placement. -->
+```
+
+  </section>
+
+  <!-- ================================================
+       HOMETOWN VISION — same mosaic system, its own mix of
+       ratios (leans slightly more landscape/environmental than
+       Editorial Beauty, per the chapter's own character).
+       ================================================ -->
+
+  <section class="chapter chapter--hometown" id="about">
+
+```
+<div class="chapter-head">
+  <div class="chapter-head__title">Hometown Vision</div>
+</div>
+
+<div class="mosaic" data-mosaic>
+  <div class="media-item" data-asset="hometown-01" data-ratio="16/9">
+    <div class="tile"><div class="tile__label">hometown-01<span>landscape · environment</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-02" data-ratio="2/3">
+    <div class="tile"><div class="tile__label">hometown-02<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-03" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">hometown-03<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-04" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">hometown-04<span>square</span></div></div>
+  </div>
+  <div class="interlude align-right" data-ratio="4/3">
+    <p class="interlude__line">Space reserved for a short piece of storytelling — not yet written.</p>
+  </div>
+  <div class="media-item" data-asset="hometown-05" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">hometown-05<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-06" data-ratio="3/2">
+    <div class="tile"><div class="tile__label">hometown-06<span>landscape</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-07" data-ratio="2/3">
+    <div class="tile"><div class="tile__label">hometown-07<span>portrait — tall</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-08" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">hometown-08<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-09" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">hometown-09<span>square</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-10" data-ratio="16/9">
+    <div class="tile"><div class="tile__label">hometown-10<span>landscape</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-11" data-ratio="3/4">
+    <div class="tile"><div class="tile__label">hometown-11<span>portrait</span></div></div>
+  </div>
+  <div class="media-item" data-asset="hometown-12" data-ratio="4/5">
+    <div class="tile"><div class="tile__label">hometown-12<span>portrait</span></div></div>
+  </div>
+</div>
+
+<div class="mosaic-fullbleed">
+  <div class="media-item" data-asset="hometown-13">
+    <div class="tile"><div class="tile__label">hometown-13<span>full-bleed · landscape (exceptional)</span></div></div>
+  </div>
+</div>
+
+<!-- MORE .media-item CHILDREN CAN BE ADDED ANYWHERE INSIDE THE
+     .mosaic ABOVE — people, architecture, landscape, culture,
+     fashion, details, further storytelling. -->
+```
+
+  </section>
+
+  <!-- ================================================
+       IN MOTION / BACKSTAGE — vertical-first mosaic. The finer
+       column count (--mosaic-cols set higher for this chapter, see
+       CSS) lets many 9:16 pieces interlock naturally, with
+       occasional square/landscape media integrated into the same
+       continuous mosaic rather than broken out separately.
+       ================================================ -->
+
+  <section class="chapter chapter--motion">
+
+```
+<div class="chapter-head">
+  <div class="chapter-head__title">In Motion</div>
+</div>
+
+<div class="mosaic" data-mosaic>
+  <div class="media-item" data-asset="motion-01" data-ratio="9/16">
+    <div class="tile tile--motion"><div class="tile__label">motion-01<span>video · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-02" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-02<span>vertical still</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-03" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">motion-03<span>square</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-04" data-ratio="9/16">
+    <div class="tile tile--motion"><div class="tile__label">motion-04<span>video · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-05" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-05<span>vertical still</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-06" data-ratio="16/9">
+    <div class="tile tile--motion"><div class="tile__label">motion-06<span>video · landscape</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-07" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-07<span>backstage · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-08" data-ratio="9/16">
+    <div class="tile tile--motion"><div class="tile__label">motion-08<span>video · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-09" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-09<span>process / hands</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-10" data-ratio="1/1">
+    <div class="tile"><div class="tile__label">motion-10<span>square</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-11" data-ratio="9/16">
+    <div class="tile tile--motion"><div class="tile__label">motion-11<span>video · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-12" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-12<span>backstage · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-13" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-13<span>backstage · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-14" data-ratio="9/16">
+    <div class="tile tile--motion"><div class="tile__label">motion-14<span>video · vertical</span></div></div>
+  </div>
+  <div class="media-item" data-asset="motion-15" data-ratio="9/16">
+    <div class="tile"><div class="tile__label">motion-15<span>backstage · vertical</span></div></div>
+  </div>
+</div>
+
+<!-- MORE .media-item CHILDREN CAN BE ADDED ANYWHERE INSIDE THE
+     .mosaic ABOVE — production stills, further clips, any mix
+     of vertical, landscape, square, or other native ratios. -->
+```
+
+  </section>
+
+  <footer class="foot" id="contact">
+    <div class="foot__name">Sybelle Lubino</div>
+    <div class="foot__loc">Guadeloupe — Available Worldwide</div>
+  </footer>
+
+  <script>
+    (function(){
+      var sequence   = document.getElementById('sequence');
+      var distant    = document.querySelector('[data-frame="distant"]');
+      var medium     = document.querySelector('[data-frame="medium"]');
+      var close      = document.querySelector('[data-frame="close"]');
+      var closeTarget = document.getElementById('closeTarget');
+      var heroText   = document.getElementById('heroText');
+      var approachText = document.getElementById('approachText');
+      var closeText  = document.getElementById('closeText');
+      var pullbackText = document.getElementById('pullbackText');
+      var scrollCue  = document.getElementById('scrollCue');
+      var gridReveal = document.getElementById('gridReveal');
+      var editorialWord = document.getElementById('editorialWord');
+      var stage = document.querySelector('.sequence__stage');
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function clamp01(v){ return Math.max(0, Math.min(1, v)); }
+      function lerp(a, b, t){ return a + (b - a) * t; }
+      function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+      function easeInOutCubic(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+
+      // Geometry cache — recomputed on resize, used to animate .frame--close
+      // from full-viewport to its resting position inside .close-target
+      var geo = { vw: 0, vh: 0, targetTop: 0, targetLeft: 0, targetW: 0, targetH: 0 };
+
+      function measure(){
+        geo.vw = window.innerWidth;
+        geo.vh = window.innerHeight;
+        var stageRect = stage.getBoundingClientRect();
+        var t = closeTarget.getBoundingClientRect();
+        geo.targetTop = t.top - stageRect.top;
+        geo.targetLeft = t.left - stageRect.left;
+        geo.targetW = t.width;
+        geo.targetH = t.height;
+      }
+
+      // Five continuous phases across one long pinned scroll track —
+      // no section boundaries, no blank screen at any point:
+      //
+      // A  Arrival -> Approach          (distant dissolves into medium)
+      // B  Approach -> Immersion        (medium dissolves into close, close
+      //                                  begins at a normal full-bleed scale)
+      // C  CLOSE BEAUTY ZOOM            (close frame scales IN past 1.0 —
+      //                                  a true push toward the face/makeup,
+      //                                  tighter than the earlier full-bleed)
+      // D  ZOOM BACK OUT INTO EDITORIAL (close frame scales back down and
+      //                                  physically moves from full-viewport
+      //                                  to its resting grid position, while
+      //                                  the surrounding grid-reveal cells
+      //                                  and editorial line fade in around it —
+      //                                  this is the reveal: "you were already
+      //                                  inside the work")
+      function update(){
+        var rect = sequence.getBoundingClientRect();
+        var total = sequence.offsetHeight - window.innerHeight;
+        var scrolled = -rect.top;
+        var progress = clamp01(scrolled / total);
+
+        if (reduceMotion) {
+          distant.style.opacity = 0;
+          medium.style.opacity = 0;
+          close.style.opacity = 1;
+          close.style.top = geo.targetTop + 'px';
+          close.style.left = geo.targetLeft + 'px';
+          close.style.width = geo.targetW + 'px';
+          close.style.height = geo.targetH + 'px';
+          close.style.transform = 'none';
+          heroText.style.opacity = 0;
+          approachText.style.opacity = 0;
+          closeText.style.opacity = 0;
+          pullbackText.style.opacity = 0;
+          gridReveal.style.opacity = 1;
+          editorialWord.style.opacity = 1;
+          scrollCue.style.opacity = 0;
+          return;
+        }
+
+        var aStart = 0.06, aEnd = 0.20;               // Arrival -> Approach
+        var aProg = clamp01((progress - aStart) / (aEnd - aStart));
+
+        var bStart = 0.26, bEnd = 0.40;                // Approach -> Immersion
+        var bProg = clamp01((progress - bStart) / (bEnd - bStart));
+
+        var cStart = 0.44, cEnd = 0.62;                // the deep beauty zoom-in
+        var cProg = clamp01((progress - cStart) / (cEnd - cStart));
+        var cEase = easeInOutCubic(cProg);
+
+        var dStart = 0.66, dEnd = 0.96;                // the pull-back reveal
+        var dProg = clamp01((progress - dStart) / (dEnd - dStart));
+        var dEase = easeInOutCubic(dProg);
+
+        // --- distant frame ---
+        distant.style.opacity = 1 - aProg;
+        distant.style.transform = 'scale(' + (1 + aProg * 0.06) + ')';
+
+        // --- medium frame ---
+        var mediumOpacity = aProg - bProg;
+        medium.style.opacity = clamp01(mediumOpacity);
+        medium.style.transform = 'scale(' + (1.05 - aProg * 0.05 + bProg * 0.06) + ')';
+
+        // --- close frame ---
+        // opacity: fades in during stage B, fully present from then on
+        close.style.opacity = bProg > 0 ? 1 : 0;
+
+        // position/size: starts as full-viewport (inset 0), by end of stage C
+        // has zoomed IN (still full-viewport box, but background-position
+        // shifts and scale increases for a true push-in on the face), then
+        // across stage D animates from full-viewport down to the resting
+        // close-target box.
+        var zoomScale = 1 + cEase * 0.35; // deep push-in toward the face/makeup
+
+        if (dProg <= 0) {
+          close.style.top = '0px';
+          close.style.left = '0px';
+          close.style.width = geo.vw + 'px';
+          close.style.height = geo.vh + 'px';
+          close.style.transform = 'scale(' + zoomScale + ')';
+          close.style.backgroundPosition = 'center ' + (30 - cEase * 12) + '%';
+        } else {
+          // pull back: interpolate box geometry from full-viewport to the
+          // close-target rect, and scale back down from the deep zoom to 1
+          var top = lerp(0, geo.targetTop, dEase);
+          var left = lerp(0, geo.targetLeft, dEase);
+          var w = lerp(geo.vw, geo.targetW, dEase);
+          var h = lerp(geo.vh, geo.targetH, dEase);
+          var scaleBack = lerp(zoomScale, 1, dEase);
+
+          close.style.top = top + 'px';
+          close.style.left = left + 'px';
+          close.style.width = w + 'px';
+          close.style.height = h + 'px';
+          close.style.transform = 'scale(' + scaleBack + ')';
+          close.style.backgroundPosition = 'center ' + lerp(30 - 12, 30, dEase) + '%';
+        }
+
+        // --- hero name/role/statement recede early, during stage A ---
+        heroText.style.opacity = clamp01(1 - aProg * 1.6);
+
+        // --- APPROACH LINE: lives on the medium frame. Fades in as
+        // stage A completes (medium arriving), holds through the
+        // middle of stage B, fades out as stage B completes (close
+        // frame taking over) — so it belongs to "medium", not to
+        // either neighboring stage. ---
+        var approachIn = clamp01((aProg - 0.55) / 0.45);
+        var approachOut = clamp01((bProg - 0.55) / 0.45);
+        approachText.style.opacity = clamp01(approachIn - approachOut);
+        approachText.style.transform = 'translateY(' + (8 - approachIn * 8) + 'px)';
+
+        // --- CLOSE LINE: appears only at the deepest point of the
+        // beauty zoom (stage C), alone — fades in as C nears
+        // completion, fades out as soon as the pull-back (D) begins,
+        // so it never overlaps the pull-back line. ---
+        var closeIn = clamp01((cProg - 0.6) / 0.35);
+        var closeOut = clamp01(dProg / 0.12);
+        closeText.style.opacity = clamp01(closeIn - closeOut);
+
+        // --- PULL-BACK LINE: belongs to the transition itself. Occupies
+        // the EARLY portion of stage D (right as the pull-back begins),
+        // then hands off to .editorial-word, which already fades in
+        // during the LATER portion of D (dProg 0.55+) — the two never
+        // overlap, so the story reads as one continuous handoff rather
+        // than two separate captions competing. ---
+        var pullbackIn = clamp01((dProg - 0.05) / 0.25);
+        var pullbackOut = clamp01((dProg - 0.45) / 0.15);
+        pullbackText.style.opacity = clamp01(pullbackIn - pullbackOut);
+        pullbackText.style.transform = 'translateX(-50%) translateY(' + (10 - pullbackIn * 10) + 'px)';
+
+        // --- the surrounding composition fades in as the pull-back happens —
+        // this is the reveal moment itself, not a separate beat after it ---
+        gridReveal.style.opacity = clamp01((dProg - 0.15) / 0.6);
+
+        editorialWord.style.opacity = clamp01((dProg - 0.55) / 0.4);
+        editorialWord.style.transform = 'translateY(' + (10 - clamp01((dProg - 0.55) / 0.4) * 10) + 'px)';
+
+        // scroll cue disappears almost immediately
+        scrollCue.style.opacity = progress > 0.02 ? 0 : 1;
+      }
+
+      var ticking = false;
+      window.addEventListener('scroll', function(){
+        if (!ticking) {
+          window.requestAnimationFrame(function(){
+            update();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      window.addEventListener('resize', function(){
+        measure();
+        update();
+      });
+
+      measure();
+      update();
+    })();
+  </script>
+
+  <!-- ================================================
+     MOSAIC PACKING SCRIPT
+     ================================================
+     Runs independently of the opening-sequence script above —
+     touches only elements inside .mosaic containers, never the
+     hero/zoom transition.
+
+     WHAT IT DOES: for each .mosaic, reads every child's aspect
+     ratio (from a loaded <img>/<video>'s real dimensions if present,
+     otherwise from its data-ratio attribute as a placeholder
+     preview), converts that ratio into a footprint of grid cells
+     at the current --cell size and column count, then walks the
+     grid left-to-right / top-to-bottom looking for the first open
+     block of cells big enough to hold that footprint — exactly the
+     "first fit, backfill gaps" logic that makes a Tetris-style
+     mosaic possible with plain CSS Grid (grid-auto-flow: dense
+     handles the actual visual packing once each item's spans are
+     set; this script's job is only to compute accurate spans and
+     assign them, since CSS alone has no way to read an aspect
+     ratio and turn it into a whole-cell footprint).
+
+     Re-runs on load, on window resize (column count changes at the
+     breakpoints defined in CSS), and once per image/video that
+     finishes loading (so a real photo's true ratio is used the
+     moment it's available, replacing the placeholder ratio without
+     a manual step).
+     ================================================ -->
+
+  <script>
+    (function(){
+      function packMosaic(mosaic){
+        var styles = getComputedStyle(mosaic);
+        var cols = parseInt(styles.getPropertyValue('--mosaic-cols')) || 24;
+        var cellPx = parseFloat(styles.getPropertyValue('--cell')) || 10;
+        // gap is included in the effective cell pitch so span
+        // calculations stay visually accurate
+        var gapPx = parseFloat(styles.gap) || 0;
+
+        var items = Array.prototype.slice.call(mosaic.children);
+
+        // occupancy grid: sparse map of "row,col" -> true
+        var occupied = {};
+        var maxRowUsed = 0;
+
+        function isFree(row, col, rowSpan, colSpan){
+          if (col + colSpan - 1 > cols) return false;
+          for (var r = row; r < row + rowSpan; r++){
+            for (var c = col; c < col + colSpan; c++){
+              if (occupied[r + ',' + c]) return false;
+            }
+          }
+          return true;
+        }
+
+        function occupy(row, col, rowSpan, colSpan){
+          for (var r = row; r < row + rowSpan; r++){
+            for (var c = col; c < col + colSpan; c++){
+              occupied[r + ',' + c] = true;
+            }
+          }
+          maxRowUsed = Math.max(maxRowUsed, row + rowSpan - 1);
+        }
+
+        function findSpot(rowSpan, colSpan){
+          // scan row by row (top to bottom), column by column
+          // (left to right) — first open block wins, which is what
+          // lets a later, smaller item backfill a gap left by an
+          // earlier, larger one rather than starting a new row
+          for (var r = 1; r <= maxRowUsed + 1; r++){
+            for (var c = 1; c <= cols - colSpan + 1; c++){
+              if (isFree(r, c, rowSpan, colSpan)) return { row: r, col: c };
+            }
+          }
+          return { row: maxRowUsed + 1, col: 1 };
+        }
+
+        // Target footprint AREA in cells — keeps items within the
+        // compact scale already established regardless of column
+        // count, by deriving column-span from a fixed target width
+        // band rather than a fixed cell count.
+        var targetColSpanBase = Math.max(3, Math.round(cols * 0.16));
+
+        items.forEach(function(item){
+          var ratio = readRatio(item);
+          if (!ratio) ratio = 4/5;
+
+          // vary footprint size slightly per item so the mosaic
+          // isn't perfectly uniform — small deterministic variation
+          // based on the item's own ratio, not random, so it's
+          // stable across re-runs/resizes
+          var sizeFactor = ratio > 1.3 ? 1.35 : (ratio < 0.7 ? 0.9 : 1);
+          var colSpan = Math.max(2, Math.round(targetColSpanBase * sizeFactor));
+          colSpan = Math.min(colSpan, cols);
+
+          // column width in px (approx, ignoring gap compounding at
+          // this precision level — good enough for footprint sizing)
+          var colWidthPx = (mosaic.clientWidth - gapPx * (cols - 1)) / cols;
+          var itemWidthPx = colWidthPx * colSpan + gapPx * (colSpan - 1);
+          var itemHeightPx = itemWidthPx / ratio;
+          var rowSpan = Math.max(1, Math.round((itemHeightPx + gapPx) / (cellPx + gapPx)));
+
+          var spot = findSpot(rowSpan, colSpan);
+          item.style.gridColumn = spot.col + ' / span ' + colSpan;
+          item.style.gridRow = spot.row + ' / span ' + rowSpan;
+          occupy(spot.row, spot.col, rowSpan, colSpan);
+        });
+      }
+
+      function readRatio(item){
+        var media = item.querySelector('img, video');
+        if (media){
+          if (media.tagName === 'IMG' && media.naturalWidth) {
+            return media.naturalWidth / media.naturalHeight;
+          }
+          if (media.tagName === 'VIDEO' && media.videoWidth) {
+            return media.videoWidth / media.videoHeight;
+          }
+        }
+        var attr = item.getAttribute('data-ratio');
+        if (attr){
+          var parts = attr.split('/');
+          if (parts.length === 2) return parseFloat(parts[0]) / parseFloat(parts[1]);
+          return parseFloat(attr);
+        }
+        return null;
+      }
+
+      function packAll(){
+        document.querySelectorAll('[data-mosaic]').forEach(packMosaic);
+      }
+
+      // re-run once any real media finishes loading, since its true
+      // ratio may differ from the placeholder data-ratio estimate
+      function watchMedia(){
+        document.querySelectorAll('[data-mosaic] img, [data-mosaic] video').forEach(function(el){
+          var evt = el.tagName === 'IMG' ? 'load' : 'loadedmetadata';
+          el.addEventListener(evt, packAll, { once: true });
+        });
+      }
+
+      var resizeTimer;
+      window.addEventListener('resize', function(){
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(packAll, 120);
+      });
+
+      if (document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', function(){
+          watchMedia();
+          packAll();
+        });
+      } else {
+        watchMedia();
+        packAll();
+      }
+    })();
+  </script>
+
+</body>
+</html>
